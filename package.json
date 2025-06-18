@@ -1,0 +1,27 @@
+{
+  "name": "gator_ts",
+  "version": "1.0.0",
+  "description": "boot.dev blog aggregator project - Typescript",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "tsx ./src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tomanta/gator_ts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tomanta/gator_ts/issues"
+  },
+  "homepage": "https://github.com/Tomanta/gator_ts#readme",
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}
