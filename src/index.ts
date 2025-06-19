@@ -2,7 +2,7 @@ import { CommandsRegistry, registerCommand, runCommand} from "./commands/command
 import { handlerLogin } from "./commands/users";
 // import { readConfig, setUser } from "./config.js";
 
-function main() {
+async function main() {
     const args = process.argv.slice(2);
 
     if (args.length === 0) {
@@ -17,7 +17,7 @@ function main() {
     registerCommand(registry, "login", handlerLogin);
 
     try {
-        runCommand(registry, args[0], ...args.slice(1,));
+        await runCommand(registry, args[0], ...args.slice(1,));
     } catch (err) {
         if (err instanceof Error) {
             console.error(`Error running command ${cmdName}: ${err.message}`);
@@ -27,6 +27,7 @@ function main() {
         process.exit(1);
     }
     
+    process.exit(0);
 }
 
 main();
