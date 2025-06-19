@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "start": "tsx ./src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate"
   },
   "repository": {
     "type": "git",
@@ -21,7 +23,12 @@
   "homepage": "https://github.com/Tomanta/gator_ts#readme",
   "devDependencies": {
     "@types/node": "^24.0.3",
+    "drizzle-kit": "^0.31.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.44.2",
+    "postgres": "^3.4.7"
   }
 }
