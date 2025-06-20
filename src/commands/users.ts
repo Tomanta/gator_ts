@@ -33,12 +33,12 @@ export async function handlerRegister(cmdName: string, ...args: string[]): Promi
 
 }
 
-export async function handlerResetUsers(cmdNAme: string, ...args: string[]): Promise<void> {
+export async function handlerResetUsers(cmdName: string, ...args: string[]): Promise<void> {
     await deleteUsers();
     console.log("Users table reset");
 }
 
-export async function handlerGetUsers(cmdNAme: string, ...args: string[]): Promise<void> {
+export async function handlerGetUsers(cmdName: string, ...args: string[]): Promise<void> {
     const users = await getUsers();
     const cfg = readConfig();
     const currentUser = cfg.currentUserName;
