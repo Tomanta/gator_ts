@@ -1,4 +1,4 @@
-import { createFeed } from "../lib/db/queries/feeds";
+import { createFeed, getFeedList } from "../lib/db/queries/feeds";
 import { Feed, User } from "../lib/db/schema";
 import { readConfig } from "../config";
 import { getUserByName } from "../lib/db/queries/users";
@@ -28,7 +28,21 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]): Promis
 
 }
 
-export function printFeed(feed: Feed, user: User) {
+export async function handlerListFeeds(cmdName: string, ...args: string[]): Promise<void> {
+    const feeds =  await getFeedList();
+
+    if (feeds.length === 0) {
+        console.log("No feeds found.");
+        return;
+    }
+
+    console.log(`Found ${feeds.length} feeds:`);
+    for (const feed of feeds) {
+        console.log(`* ${feed.name} - ${feed.url} - Created by: ${feed.userName}`);
+    }
+}
+
+function printFeed(feed: Feed, user: User) {
   console.log(`* ID:            ${feed.id}`);
   console.log(`* Created:       ${feed.createdAt}`);
   console.log(`* Updated:       ${feed.updatedAt}`);
