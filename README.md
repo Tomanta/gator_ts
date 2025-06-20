@@ -16,3 +16,7 @@ https://orm.drizzle.team/docs/overview
 npm i drizzle-orm postgres
 npm i -D drizzle-kit
 ```
+
+## Requires: fast-xml-parser
+
+`npm i fast-xml-parser`

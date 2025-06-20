@@ -1,5 +1,6 @@
 import { CommandsRegistry, registerCommand, runCommand} from "./commands/commands";
 import { handlerLogin, handlerRegister, handlerResetUsers, handlerGetUsers } from "./commands/users";
+import { handlerAgg } from "./commands/aggregate";
 
 async function main() {
 
@@ -18,6 +19,7 @@ async function main() {
     registerCommand(registry, "register", handlerRegister);
     registerCommand(registry, "reset", handlerResetUsers);
     registerCommand(registry, "users", handlerGetUsers);
+    registerCommand(registry, "agg", handlerAgg);
 
     try {
         await runCommand(registry, args[0], ...args.slice(1,));
