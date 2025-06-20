@@ -10,6 +10,8 @@ To start database: `sudo service postgresql start`
 
 Drizzle is for the database migrations
 
+https://orm.drizzle.team/docs/overview
+
 ```bash
 npm i drizzle-orm postgres
 npm i -D drizzle-kit

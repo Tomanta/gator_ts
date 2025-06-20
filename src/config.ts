@@ -17,6 +17,7 @@ export function readConfig(): Config {
     const path = getConfigFilePath();
     const rawCfg = fs.readFileSync(path, "utf-8");
     const validCfg = validateConfig(JSON.parse(rawCfg));
+
     return validCfg;
 }
 

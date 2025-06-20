@@ -13,7 +13,7 @@ export async function runCommand(registry: CommandsRegistry, cmdName: string, ..
         throw Error(`invalid command: ${cmdName}`);
     }
     
-    handler(cmdName, ...args);
+    await handler(cmdName, ...args);
 }
 
 
