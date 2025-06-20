@@ -27,6 +27,17 @@ export async function getUserByName(name: string) {
     return firstOrUndefined(result);
 }
 
+export async function getUsers() {
+    const result = await db.select({
+             id: users.id,
+            createdAt: users.createdAt,
+            updatedAt: users.updatedAt,
+            name: users.name,
+       
+    }).from(users)
+    return result;
+}
+
 export async function deleteUsers() {
     await db.delete(users);
 }
