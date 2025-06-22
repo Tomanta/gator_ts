@@ -1,4 +1,4 @@
-import { createFeed, getFeedList } from "../lib/db/queries/feeds";
+import { createFeed, getFeedList, createFeedFollow, getFeedFollowsForUser } from "../lib/db/queries/feeds";
 import { Feed, User } from "../lib/db/schema";
 import { readConfig } from "../config";
 import { getUserByName } from "../lib/db/queries/users";
@@ -24,8 +24,14 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]): Promis
     }
     
     console.log("Feed created successfully:");
-    printFeed(feed, user);
 
+    const feedFollow = await createFeedFollow(cfg.currentUserName, feed.url);
+
+    if (!feedFollow) {
+        throw new Error(`Could not follow feed ${feed.url}`);
+    }
+
+    printFeed(feed, user);
 }
 
 export async function handlerListFeeds(cmdName: string, ...args: string[]): Promise<void> {
@@ -40,6 +46,36 @@ export async function handlerListFeeds(cmdName: string, ...args: string[]): Prom
     for (const feed of feeds) {
         console.log(`* ${feed.name} - ${feed.url} - Created by: ${feed.userName}`);
     }
+}
+
+export async function handlerFollow(cmdName: string, ...args: string[]): Promise<void> {
+    if (args.length !== 1) {
+        throw new Error(`Usage: ${cmdName} <feed url>`);
+    }
+    const cfg = readConfig();
+    const urlToFollow = args[0];
+
+    const feedFollow = await createFeedFollow(cfg.currentUserName, urlToFollow);
+    if (!feedFollow) {
+        throw new Error(`Could not follow: ${urlToFollow}`);
+    }
+
+    console.log(`${feedFollow.userName} is now following ${feedFollow.feedName}`)
+}
+
+export async function handlerFollowing(cmdName: string, ...args: string[]): Promise<void> {
+    const cfg = readConfig();
+
+    const feeds = await getFeedFollowsForUser(cfg.currentUserName);
+
+    if (!feeds || feeds.length === 0) {
+        console.log(`No feeds found for user ${cfg.currentUserName}`);
+    }
+
+    for (const feed of feeds) {
+        console.log(`* ${feed.feedName}`);
+    }
+
 }
 
 function printFeed(feed: Feed, user: User) {
