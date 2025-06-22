@@ -2,8 +2,9 @@ import { db } from "..";
 import { users } from "../schema";
 import { eq } from "drizzle-orm";
 import { firstOrUndefined } from "./utils.js";
+import { User } from "../schema";
 
-export async function createUser(name: string) {
+export async function createUser(name: string): Promise<User> {
     const userCheck = await getUserByName(name);
 
     if (userCheck) {
@@ -14,7 +15,7 @@ export async function createUser(name: string) {
     return result;
 }
 
-export async function getUserByName(name: string) {
+export async function getUserByName(name: string): Promise<User | undefined> {
     const result = await db.select(
         {
             id: users.id,
@@ -27,7 +28,7 @@ export async function getUserByName(name: string) {
     return firstOrUndefined(result);
 }
 
-export async function getUsers() {
+export async function getUsers(): Promise<User[]> {
     const result = await db.select({
              id: users.id,
             createdAt: users.createdAt,

@@ -1,18 +1,9 @@
 import { createFeed, getFeedList, createFeedFollow, getFeedFollowsForUser } from "../lib/db/queries/feeds";
 import { Feed, User } from "../lib/db/schema";
-import { readConfig } from "../config";
-import { getUserByName } from "../lib/db/queries/users";
 
-
-export async function handlerAddFeed(cmdName: string, ...args: string[]): Promise<void> {
+export async function handlerAddFeed(cmdName: string, user: User, ...args: string[]): Promise<void> {
     if (args.length !== 2) {
         throw new Error(`Usage: ${cmdName} <feed name> <feed url>`);
-    }
-    const cfg = readConfig();
-    const user = await getUserByName(cfg.currentUserName);
-
-    if (!user) {
-        throw new Error(`Could not find current user: ${cfg.currentUserName}`);
     }
 
     const feedName = args[0];
@@ -25,7 +16,7 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]): Promis
     
     console.log("Feed created successfully:");
 
-    const feedFollow = await createFeedFollow(cfg.currentUserName, feed.url);
+    const feedFollow = await createFeedFollow(user.name, feed.url);
 
     if (!feedFollow) {
         throw new Error(`Could not follow feed ${feed.url}`);
@@ -48,14 +39,14 @@ export async function handlerListFeeds(cmdName: string, ...args: string[]): Prom
     }
 }
 
-export async function handlerFollow(cmdName: string, ...args: string[]): Promise<void> {
+export async function handlerFollow(cmdName: string, user: User, ...args: string[]): Promise<void> {
     if (args.length !== 1) {
         throw new Error(`Usage: ${cmdName} <feed url>`);
     }
-    const cfg = readConfig();
     const urlToFollow = args[0];
 
-    const feedFollow = await createFeedFollow(cfg.currentUserName, urlToFollow);
+    const feedFollow = await createFeedFollow(user.name, urlToFollow);
+
     if (!feedFollow) {
         throw new Error(`Could not follow: ${urlToFollow}`);
     }
@@ -63,13 +54,11 @@ export async function handlerFollow(cmdName: string, ...args: string[]): Promise
     console.log(`${feedFollow.userName} is now following ${feedFollow.feedName}`)
 }
 
-export async function handlerFollowing(cmdName: string, ...args: string[]): Promise<void> {
-    const cfg = readConfig();
-
-    const feeds = await getFeedFollowsForUser(cfg.currentUserName);
+export async function handlerFollowing(cmdName: string, user: User, ...args: string[]): Promise<void> {
+    const feeds = await getFeedFollowsForUser(user.name);
 
     if (!feeds || feeds.length === 0) {
-        console.log(`No feeds found for user ${cfg.currentUserName}`);
+        console.log(`No feeds found for user ${user.name}`);
     }
 
     for (const feed of feeds) {
