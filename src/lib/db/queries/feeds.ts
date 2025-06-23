@@ -2,7 +2,7 @@ import { db } from "..";
 import { feeds, users, feed_follow, User } from "../schema";
 import { getUserByName } from "./users";
 import { firstOrUndefined } from "./utils.js";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
 
 export async function createFeed(name: string, url: string, userID: string) {
@@ -118,4 +118,18 @@ export async function getFeedFollowsForUser(userName: string) {
         .innerJoin(users, eq(users.id,feed_follow.user_id))
         .where(eq(users.name, userName));
     return result;
+}
+
+export async function markFeedFetched(feedID: string) {
+    await db.update(feeds)
+            .set({ lastFetchedAt: sql`NOW()`})
+            .where(eq(feeds.id, feedID));
+}
+
+export async function getNextFeedToFetch() {
+    const result = await db.select()
+                .from(feeds)
+                .orderBy(sql`${feeds.lastFetchedAt} asc nulls first`)
+                .limit(1);
+    return firstOrUndefined(result);
 }
