@@ -1,8 +1,8 @@
 import { db } from "..";
-import { feeds, users, feed_follow } from "../schema";
+import { feeds, users, feed_follow, User } from "../schema";
 import { getUserByName } from "./users";
 import { firstOrUndefined } from "./utils.js";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 
 export async function createFeed(name: string, url: string, userID: string) {
@@ -91,6 +91,19 @@ export async function createFeedFollow(userName: string, url: string) {
         .innerJoin(users, eq(users.id,newFeedFollow.user_id ))
     
     return firstOrUndefined(result);
+}
+
+export async function deleteFeedFollow(user: User, feedURL: string) {
+    const feed = await getFeedFromURL(feedURL);
+    if (!feed) {
+        throw new Error(`Feed ${feedURL} does not exist`);
+    }
+    
+    console.log(`DEBUG: user: ${user.id} - feed: ${feed.id}`);
+    await db.delete(feed_follow)
+            .where(and(eq(feed_follow.user_id,user.id),
+                       eq(feed_follow.feed_id,feed.id))
+                  );
 }
 
 export async function getFeedFollowsForUser(userName: string) {

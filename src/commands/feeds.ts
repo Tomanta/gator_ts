@@ -1,4 +1,4 @@
-import { createFeed, getFeedList, createFeedFollow, getFeedFollowsForUser } from "../lib/db/queries/feeds";
+import { createFeed, getFeedList, createFeedFollow, getFeedFollowsForUser, deleteFeedFollow } from "../lib/db/queries/feeds";
 import { Feed, User } from "../lib/db/schema";
 
 export async function handlerAddFeed(cmdName: string, user: User, ...args: string[]): Promise<void> {
@@ -52,6 +52,17 @@ export async function handlerFollow(cmdName: string, user: User, ...args: string
     }
 
     console.log(`${feedFollow.userName} is now following ${feedFollow.feedName}`)
+}
+
+export async function handlerUnfollow(cmdName: string, user: User, ...args: string[]): Promise<void> {
+    if (args.length !== 1) {
+        throw new Error(`Usage: ${cmdName} <feed url>`);
+    }
+    const urlToUnfollow = args[0];
+
+    await deleteFeedFollow(user, urlToUnfollow);
+
+    console.log(`${urlToUnfollow} no longer followed`);
 }
 
 export async function handlerFollowing(cmdName: string, user: User, ...args: string[]): Promise<void> {
