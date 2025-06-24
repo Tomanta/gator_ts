@@ -2,6 +2,8 @@ import { fetchFeed } from "../lib/rss";
 import { getNextFeedToFetch, markFeedFetched } from "../lib/db/queries/feeds"
 import { Feed } from "../lib/db/schema";
 import { parseDuration } from "../lib/time";
+import { createFeed } from "../lib/db/queries/feeds";
+import { createPost } from "../lib/db/queries/posts";
 
 export async function handlerAgg(cmdName: string, ...args: string[]): Promise<void> {
     if (args.length !== 1) {
@@ -54,8 +56,13 @@ async function scrapeFeed(feed: Feed) {
 
     const feedData = await fetchFeed(feed.url);
 
-    console.log(
-        `Feed ${feed.name} collected, ${feedData.length} posts found`
-    );
-
+    for (const post of feedData) {
+        let _ = await createPost(
+            post.title,
+            post.link,
+            post.description,
+            new Date(Date.parse(post.pubDate)),
+            feed.id
+        )
+    }
 }
