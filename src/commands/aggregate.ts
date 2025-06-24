@@ -1,23 +1,29 @@
 import { fetchFeed } from "../lib/rss";
 import { getNextFeedToFetch, markFeedFetched } from "../lib/db/queries/feeds"
-import { User } from "../lib/db/schema";
+import { Feed } from "../lib/db/schema";
+import { parseDuration } from "../lib/time";
 
-export async function handlerAgg(cmdName: string, user: User, ...args: string[]): Promise<void> {
+export async function handlerAgg(cmdName: string, ...args: string[]): Promise<void> {
     if (args.length !== 1) {
         throw new Error(`Usage: ${cmdName} <time_between_reqs>`);
     }
-    const timeBetweenReqs = parseInt(args[0]);
+    
+    const timeArg = args[0];
+    const timeBetweenReqs = parseDuration(timeArg);
+    
     if (!timeBetweenReqs) {
-        throw new Error(`Invalid time: ${args[0]}`);
+        throw new Error(`Invalid time: ${timeArg}`);
     }
 
-    console.log(`Collecting feeds every ${timeBetweenReqs} seconds`);
+    console.log(`Collecting feeds every ${timeArg}...`);
 
+    // run the first scrape immediately
     scrapeFeeds().catch(handleError);
 
+    // Run new feeds
     const interval = setInterval(() => {
         scrapeFeeds().catch(handleError);
-    }, timeBetweenReqs * 100)
+    }, timeBetweenReqs)
 
     await new Promise<void>((resolve) => {
         process.on("SIGINT", () => {
@@ -39,11 +45,17 @@ async function scrapeFeeds() {
     if (!next_feed) {
          throw new Error(`No feed to fetch!`)
     }
-    await markFeedFetched(next_feed.id)
+    console.log(`Found a feed to fetch!`);
+    await scrapeFeed(next_feed);
+}
 
-    const feed = await fetchFeed(next_feed.url);
+async function scrapeFeed(feed: Feed) {
+    await markFeedFetched(feed.id)
+
+    const feedData = await fetchFeed(feed.url);
 
     console.log(
-        `Feed ${next_feed.name} collected, ${feed.length} posts found`
+        `Feed ${feed.name} collected, ${feedData.length} posts found`
     );
+
 }
