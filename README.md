@@ -1,6 +1,16 @@
 # gator_ts
 boot.dev blog aggregator project - Typescript
 
+## Requirements
+
+Create a `.gatorconfig.json` file in ~home:
+
+```
+{
+  "db_url": "postgres://postgres:postgres@localhost:5432/gatorts?sslmode=disable",
+  "current_user_name": "bob"
+}
+```
 
 ## Requires: Postgres
 
